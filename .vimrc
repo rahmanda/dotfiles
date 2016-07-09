@@ -25,12 +25,16 @@ Plugin 'editorconfig/editorconfig-vim'
 Plugin 'dracula/vim'
 " status line
 Plugin 'itchyny/lightline.vim'
+" line up text
+Plugin 'godlygeek/tabular'
 " fuzzy file search and tab navigation
 Plugin 'wincent/command-t'
 " syntax highlighter for scss
 Plugin 'cakebaker/scss-syntax.vim'
 " syntax highlighter for javascript
 Plugin 'pangloss/vim-javascript'
+" syntax highlighter for markdown
+Plugin 'plasticboy/vim-markdown'
 
 call vundle#end()    
 filetype plugin indent on 
@@ -45,3 +49,6 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+" vim-markdown configuration
+let g:vim_markdown_folding_disabled = 1
