@@ -65,16 +65,14 @@
 (setq auto-save-default nil)
 (setq make-backup-files nil)
 
-(require 'evil)
-(evil-mode 1)
-(setq x-select-enable-clipboard t)
-(eval-after-load "evil"
-  '(progn
-     (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-     ))
+(require 'ergoemacs-mode)
+(ergoemacs-mode 1)
+
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-agenda-files (list "~/org"))
+(setq org-log-done t)
 
 (require 'flx-ido)
 (ido-mode 1)
