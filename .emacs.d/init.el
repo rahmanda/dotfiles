@@ -9,94 +9,86 @@
    t)
   (package-initialize))
 
-(require 'editorconfig)
-(editorconfig-mode 1)
-
 ;; Load theme
 (load-theme 'spolsky t)
+
+;; Disable backup and auto save
+(setq auto-save-default nil)
+(setq make-backup-files nil)
 
 ;; Disable menubar and toolbar
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; Set toggle for project-explorer
+;; Set ergoemacs-mode - keybinding
+(require 'ergoemacs-mode)
+(ergoemacs-mode 1)
+
+;; Set editorconfig - indenting and trailing spaces control
+(require 'editorconfig)
+(editorconfig-mode 1)
+
+;; Set helm - files discovery tool
+(require 'helm)
+(require 'helm-config)
+(helm-mode 1)
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+;; Set project-explorer - tree view directories
+(require 'project-explorer)
 (global-set-key [f8] 'project-explorer-toggle)
 
-;; Set powerline
+;; Set spaceline - status bar theme
 (require 'spaceline-config)
 (spaceline-emacs-theme)
-
-;; Set smex
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-;; Custom tabs for coffee
-;; This gives you a tab of 2 spaces
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2)
- '(custom-safe-themes
-   (quote
-    ("79a3f477ac0cb4a106f78b6109614e991564a5c2467c36e6e854d4bc1102e178" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "e87a2bd5abc8448f8676365692e908b709b93f2d3869c42a4371223aab7d9cf8" "0fb6369323495c40b31820ec59167ac4c40773c3b952c264dd8651a3b704f6b5" "0c29db826418061b40564e3351194a3d4a125d182c6ee5178c237a7364f0ff12" default)))
- '(initial-frame-alist (quote ((fullscreen . maximized)))))
 
 ;; Set windmove
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 
-;; Set hook for linum-mode
+;; Set linum-mode - view line number
 (add-hook 'prog-mode-hook 'linum-mode)
 (add-hook 'scss-mode-hook 'linum-mode)
 (add-hook 'web-mode-hook 'linum-mode)
 (add-hook 'js2-mode-hook 'linum-mode)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-(setq auto-save-default nil)
-(setq make-backup-files nil)
-
-(require 'ergoemacs-mode)
-(ergoemacs-mode 1)
-
+;; Set org - todos and agenda organizer
 (require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-agenda-files (list "~/org"))
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(setq org-agenda-files (list "~/your-org-agenda-directory"))
 (setq org-log-done t)
+(setq org-capture-templates
+      '(("t" "Personal Todo" entry (file+headline "~/your-org-personal/todos.org" "Tasks")
+	 "* TODO [#C] %?")
+	("w" "Work Todo" entry (file+headline "~/your-org-work/work.org" "Tasks")
+	 "* TODO [#C] %?")
+	))
 
-(require 'flx-ido)
-(ido-mode 1)
-(ido-everywhere 1)
-(flx-ido-mode 1)
-;; disable ido faces to see flx highlights.
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
+;; Set ledger-mode - financial organizer
+(require 'ledger-mode)
+(setq ledger-clear-whole-transaction 1)
+(add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))
 
+;; Set rvm - Ruby Version Manager
 (require 'rvm)
 (rvm-use-default)
 
-;; Set projectile mode
+;; Set projectile mode - project's files discovery tool
+(require 'projectile)
 (projectile-global-mode)
-(setq projectile-completion-system 'ido) ;; Use flx-ido search
-(setq projectile-switch-project-action 'projectile-dired) ;; hook projectile
 
-;; Set magit
+;; Set helm-projectile - integrating helm with projectile
+(require 'helm-projectile)
+(helm-projectile-on)
+
+;; Set magit - git made easy
+(require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status) (global-set-key (kbd "C-x g") 'magit-status)
 
-;; Set ido mode
-(ido-mode t)
-
-;; Set flycheck
+;; Set flycheck - linting
 (require 'flycheck)
 (add-hook 'after-init-hook #'global-flycheck-mode)
 (require 'flycheck-color-mode-line)
@@ -108,27 +100,36 @@
 (flycheck-add-mode 'javascript-eslint 'web-mode)
 (setq-default flycheck-temp-prefix ".flycheck")
 (setq-default flycheck-disabled-checkers
-  (append flycheck-disabled-checkers
-    '(json-jsonlist)))
+	      (append flycheck-disabled-checkers
+		      '(json-jsonlist)))
 
-;; Set vimish fold
+;; Set vimish fold - folding code
+(require 'vimish-fold)
 (vimish-fold-global-mode 1)
 (global-set-key (kbd "C-x v f") #'vimish-fold)
 (global-set-key (kbd "C-x v v") #'vimish-fold-delete)
 
+;; Set multiple-cursors
 (require 'multiple-cursors)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 (delete-selection-mode 1)
 
-(indent-guide-global-mode)
+;; Set highlight indent guides mode
+(require 'highlight-indent-guides)
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+(setq highlight-indent-guides-method 'character)
 
+;; Set rainbow delimiters mode - highlight braces and quotes depth level
+(require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-;; enable auto pair
+;; enable auto pair - auto complete for braces and quotes
+(require 'autopair)
 (autopair-global-mode)
 
+;; Set web mode
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
@@ -140,22 +141,18 @@
 
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(custom-set-variables
- '(js2-basic-offset 2)
- '(js2-bounce-indent-p t)
-)
 
 (require 'scss-mode)
 (add-hook 'scss-mode-hook
-  (lambda ()
-    (setq css-indent-offset 2))
-  )
+	  (lambda ()
+	    (setq css-indent-offset 2))
+	  )
 (add-hook 'scss-mode-hook 'flycheck-mode)
 
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
-    (let ((web-mode-enable-part-face nil))
-      ad-do-it)
+      (let ((web-mode-enable-part-face nil))
+	ad-do-it)
     ad-do-it))
 
 (require 'yaml-mode)
