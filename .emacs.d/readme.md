@@ -9,6 +9,7 @@ Clone cask from github:
 git clone https://github.com/cask/cask.git ~/.cask
 ```  
 and add this `export PATH="$PATH:$HOME/.cask/bin"` to `~/.profile`.  
+
 Next, copy all code from this repository's `init.el` file into `~/.emacs.d/init.el` (if init file is not exist, just create it beforehand).  
 
 Install Pallet
