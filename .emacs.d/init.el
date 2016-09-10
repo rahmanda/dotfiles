@@ -1,13 +1,40 @@
 ;;; package --- Init file
 ;;; Commentary:
 ;;; Code:
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "http://melpa.org/packages/")
-   t)
-  (package-initialize))
+(require 'cask "~/.cask/cask.el")
+(cask-initialize)
+(require 'pallet)
+(pallet-mode t)
+
+(require 'sublime-themes)
+(require 'spaceline)
+(require 'ergoemacs-mode)
+(require 'flx-ido)
+(require 'editorconfig)
+(require 'project-explorer)
+(require 'spaceline-config)
+(require 'org)
+(require 'ledger-mode)
+(require 'rvm)
+(require 'projectile)
+(require 'magit)
+(require 'flycheck)
+(require 'flycheck-color-mode-line)
+(require 'vimish-fold)
+(require 'multiple-cursors)
+(require 'highlight-indent-guides)
+(require 'rainbow-delimiters)
+(require 'autopair)
+(require 'web-mode)
+(require 'js2-mode)
+(require 'coffee-mode)
+(require 'scss-mode)
+(require 'yaml-mode)
+(require 'sws-mode)
+(require 'php-mode)
+(require 'markdown-mode)
+(require 'avy)
+(require 'use-package)
 
 ;; Load theme
 (load-theme 'spolsky t)
@@ -21,133 +48,187 @@
 (tool-bar-mode -1)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; Set ergoemacs-mode - keybinding
-(require 'ergoemacs-mode)
-(ergoemacs-mode 1)
-
-;; Set editorconfig - indenting and trailing spaces control
-(require 'editorconfig)
-(editorconfig-mode 1)
-
-;; Set helm - files discovery tool
-(require 'helm)
-(require 'helm-config)
-(helm-mode 1)
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-;; Set project-explorer - tree view directories
-(require 'project-explorer)
-(global-set-key [f8] 'project-explorer-toggle)
-
-;; Set spaceline - status bar theme
-(require 'spaceline-config)
-(spaceline-emacs-theme)
-
 ;; Set windmove
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 
 ;; Set linum-mode - view line number
 (add-hook 'prog-mode-hook 'linum-mode)
-(add-hook 'scss-mode-hook 'linum-mode)
-(add-hook 'web-mode-hook 'linum-mode)
-(add-hook 'js2-mode-hook 'linum-mode)
 
-;; Set org - todos and agenda organizer
-(require 'org)
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-(setq org-agenda-files (list "~/your-org-agenda-directory"))
-(setq org-log-done t)
-(setq org-capture-templates
-      '(("t" "Personal Todo" entry (file+headline "~/your-org-personal/todos.org" "Tasks")
+(setq indent-tabs-mode nil)
+
+
+;; Packages:
+
+(use-package ergoemacs-mode
+  :init
+  (setq ergoemacs-theme-options (quote ((save-options-on-exit off))))
+  :config
+  (ergoemacs-mode 1)
+  )
+
+(use-package flx-ido
+  :init
+  (progn
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-faces nil)
+  :config
+  (progn
+  (ido-mode 1)
+  (ido-everywhere 1)
+  (flx-ido-mode 1)))
+  )
+
+(use-package editorconfig
+  :config
+  (editorconfig-mode 1)
+  )
+
+(use-package project-explorer
+  :bind
+  ("<F8>" . project-explorer-toggle)
+  )
+
+(use-package spaceline
+  :config
+  (spaceline-emacs-theme)
+  )
+
+(use-package avy
+  :bind
+  (("C-:" . avy-goto-char)
+   ("C-'" . avy-goto-char-2)
+   ("M-g f" . avy-goto-line)
+   ("M-g w" . avy-goto-word-1))
+  )
+
+(use-package org
+  :bind
+  (("C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ("C-c c" . org-capture)
+   )
+  :init
+  (progn
+  (setq org-agenda-files (list "~/perkamen"))
+   (setq org-log-done t)
+   (setq org-capture-templates
+	 '(("t" "Personal Todo" entry (file+headline "~/perkamen/todos.org" "Tasks")
 	 "* TODO [#C] %?")
-	("w" "Work Todo" entry (file+headline "~/your-org-work/work.org" "Tasks")
+	("w" "Work Todo" entry (file+headline "~/perkamen/work.org" "Tasks")
 	 "* TODO [#C] %?")
 	))
+   )
+   )
 
-;; Set ledger-mode - financial organizer
-(require 'ledger-mode)
-(setq ledger-clear-whole-transaction 1)
-(add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))
+(use-package ledger-mode
+  :config
+  (progn
+  (add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))
+  (setq ledger-clear-whole-transaction 1))
+  )
 
-;; Set rvm - Ruby Version Manager
-(require 'rvm)
-(rvm-use-default)
+(use-package projectile
+  :config
+  (projectile-global-mode)
+  )
 
-;; Set projectile mode - project's files discovery tool
-(require 'projectile)
-(projectile-global-mode)
+(use-package rvm
+  :config
+  (rvm-use-default))
 
-;; Set helm-projectile - integrating helm with projectile
-(require 'helm-projectile)
-(helm-projectile-on)
+(use-package magit
+  :bind
+  ("C-x g" . magit-status))
 
-;; Set magit - git made easy
-(require 'magit)
-(global-set-key (kbd "C-x g") 'magit-status) (global-set-key (kbd "C-x g") 'magit-status)
+(use-package flycheck
+  :config
+  (progn
+    (add-hook 'after-init-hook 'global-flycheck-mode)
+    (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
+    (setq-default flycheck-temp-prefix ".flycheck"))
+  )
 
-;; Set flycheck - linting
-(require 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(require 'flycheck-color-mode-line)
-(eval-after-load "flycheck"
-  '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-(setq-default flycheck-disabled-checkers
-	      (append flycheck-disabled-checkers
-		      '(javascript-jshint)))
 (flycheck-add-mode 'javascript-eslint 'web-mode)
-(setq-default flycheck-temp-prefix ".flycheck")
-(setq-default flycheck-disabled-checkers
-	      (append flycheck-disabled-checkers
-		      '(json-jsonlist)))
 
-;; Set vimish fold - folding code
-(require 'vimish-fold)
-(vimish-fold-global-mode 1)
-(global-set-key (kbd "C-x v f") #'vimish-fold)
-(global-set-key (kbd "C-x v v") #'vimish-fold-delete)
+(use-package vimish-fold
+  :config
+  (vimish-fold-global-mode 1)
+  :bind
+  (("C-x v f" . vimish-fold)
+   ("C-x v v" . vimish-fold-delete))
+  )
 
-;; Set multiple-cursors
-(require 'multiple-cursors)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(delete-selection-mode 1)
+(use-package multiple-cursors
+  :bind
+  (("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/mark-previous-like-this)
+   ("C-c C-<" . mc/mark-all-like-this))
+  :config
+  (delete-selection-mode 1)
+  )
 
-;; Set highlight indent guides mode
-(require 'highlight-indent-guides)
-(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-(setq highlight-indent-guides-method 'character)
+(use-package highlight-indent-guides
+  :config
+  (progn
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+    (setq highlight-indent-guides-method 'character))
+  )
 
-;; Set rainbow delimiters mode - highlight braces and quotes depth level
-(require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+(use-package rainbow-delimiters
+  :config
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  )
 
-;; enable auto pair - auto complete for braces and quotes
-(require 'autopair)
-(autopair-global-mode)
+(use-package autopair
+  :config
+  (autopair-global-mode))
 
-;; Set web mode
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
+(use-package web-mode
+  :config
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (add-hook 'web-mode-hook 'linum-mode))
+  )
 
-(setq js-indent-level 2)
+(use-package js2-mode
+  :config
+  (progn
+    (setq js-indent-level 2)
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-hook 'js2-mode-hook 'linum-mode))
+  )
 
-(require 'js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(use-package coffee-mode
+  :config
+  (add-to-list 'coffee-mode-hook 'flycheck-mode)
+  )
 
-(require 'scss-mode)
-(add-hook 'scss-mode-hook
-	  (lambda ()
+(use-package scss-mode
+  :config
+  (progn
+  (add-hook 'scss-mode-hook
+	    (lambda ()
 	    (setq css-indent-offset 2))
-	  )
-(add-hook 'scss-mode-hook 'flycheck-mode)
+	    )
+  (add-hook 'scss-mode-hook 'flycheck-mode)
+  (add-hook 'scss-mode-hook 'linum-mode)
+  )
+  )
+
+(use-package yaml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  )
+
+(use-package sws-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.jade$" . sws-mode))
+  )
 
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
@@ -155,11 +236,6 @@
 	ad-do-it)
     ad-do-it))
 
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-
-(require 'sws-mode)
-(add-to-list 'auto-mode-alist '("\\.jade$" . sws-mode))
-
 (provide 'init)
+
 ;;; init.el ends here
