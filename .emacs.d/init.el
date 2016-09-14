@@ -32,7 +32,9 @@
 (require 'yaml-mode)
 (require 'sws-mode)
 (require 'php-mode)
+(require 'json-mode)
 (require 'markdown-mode)
+(require 'haml-mode)
 (require 'avy)
 (require 'use-package)
 
@@ -62,7 +64,11 @@
 
 (use-package ergoemacs-mode
   :init
+  (progn
   (setq ergoemacs-theme-options (quote ((save-options-on-exit off))))
+  (setq ergoemacs-theme nil)
+  (setq ergoemacs-keyboard-layout "us")
+  )
   :config
   (ergoemacs-mode 1)
   )
@@ -72,11 +78,12 @@
   (progn
   (setq ido-enable-flex-matching t)
   (setq ido-use-faces nil)
+  (setq gc-cons-threshold 20000000))
   :config
   (progn
   (ido-mode 1)
   (ido-everywhere 1)
-  (flx-ido-mode 1)))
+  (flx-ido-mode 1))
   )
 
 (use-package editorconfig
@@ -203,10 +210,19 @@
     (add-hook 'js2-mode-hook 'linum-mode))
   )
 
+(use-package json-mode
+  :config
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+    (add-hook 'json-mode-hook 'linum-mode))
+  )
+
 (use-package coffee-mode
   :config
   (add-to-list 'coffee-mode-hook 'flycheck-mode)
   )
+
+(use-package vue-mode)
 
 (use-package scss-mode
   :config
@@ -223,6 +239,11 @@
 (use-package yaml-mode
   :config
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  )
+
+(use-package haml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.haml$" . haml-mode))
   )
 
 (use-package sws-mode
