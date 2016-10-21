@@ -35,6 +35,7 @@
 (require 'json-mode)
 (require 'markdown-mode)
 (require 'haml-mode)
+(require 'jade-mode)
 (require 'avy)
 (require 'use-package)
 
@@ -93,7 +94,7 @@
 
 (use-package project-explorer
   :bind
-  ("<F8>" . project-explorer-toggle)
+  ("<f8>" . project-explorer-toggle)
   )
 
 (use-package spaceline
@@ -219,7 +220,7 @@
 
 (use-package coffee-mode
   :config
-  (add-to-list 'coffee-mode-hook 'flycheck-mode)
+  (add-hook 'coffee-mode-hook 'flycheck-mode)
   )
 
 (use-package vue-mode)
@@ -246,9 +247,12 @@
   (add-to-list 'auto-mode-alist '("\\.haml$" . haml-mode))
   )
 
-(use-package sws-mode
+(use-package jade-mode
   :config
-  (add-to-list 'auto-mode-alist '("\\.jade$" . sws-mode))
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.{jade|pug}$" . jade-mode))
+    (add-hook 'jade-mode-hook 'linum-mode)
+    )
   )
 
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
