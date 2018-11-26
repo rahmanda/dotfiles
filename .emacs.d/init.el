@@ -8,7 +8,6 @@
 
 (require 'sublime-themes)
 (require 'spaceline)
-(require 'ergoemacs-mode)
 (require 'flx-ido)
 (require 'editorconfig)
 (require 'project-explorer)
@@ -51,10 +50,6 @@
 (tool-bar-mode -1)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; Set windmove
-(when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings))
-
 ;; Set linum-mode - view line number
 (add-hook 'prog-mode-hook 'linum-mode)
 
@@ -63,16 +58,21 @@
 
 ;; Packages:
 
-(use-package ergoemacs-mode
-  :init
-  (progn
-  (setq ergoemacs-theme-options (quote ((save-options-on-exit off))))
-  (setq ergoemacs-theme nil)
-  (setq ergoemacs-keyboard-layout "us")
-  )
+(use-package evil
   :config
-  (ergoemacs-mode 1)
+  (evil-mode 1))
+
+(use-package evil-magit)
+
+;; Dependencies for evil-mc
+(use-package multiple-cursors
+  :config
+  (delete-selection-mode 1)
   )
+
+(use-package evil-mc
+  :config
+  (evil-mc-mode 1))
 
 (use-package flx-ido
   :init
@@ -92,30 +92,16 @@
   (editorconfig-mode 1)
   )
 
-(use-package project-explorer
-  :bind
-  ("<f8>" . project-explorer-toggle)
-  )
+(use-package project-explorer)
 
 (use-package spaceline
   :config
   (spaceline-emacs-theme)
   )
 
-(use-package avy
-  :bind
-  (("C-:" . avy-goto-char)
-   ("C-'" . avy-goto-char-2)
-   ("M-g f" . avy-goto-line)
-   ("M-g w" . avy-goto-word-1))
-  )
+(use-package avy)
 
 (use-package org
-  :bind
-  (("C-c l" . org-store-link)
-   ("C-c a" . org-agenda)
-   ("C-c c" . org-capture)
-   )
   :init
   (progn
   (setq org-agenda-files (list "~/perkamen"))
@@ -138,16 +124,18 @@
 
 (use-package projectile
   :config
-  (projectile-global-mode)
+  (progn
+    (projectile-mode)
+    (setq projectile-enable-caching t)
+    (setq projectile-indexing-method 'alien)
   )
+)
 
 (use-package rvm
   :config
   (rvm-use-default))
 
-(use-package magit
-  :bind
-  ("C-x g" . magit-status))
+(use-package magit)
 
 (use-package flycheck
   :config
@@ -162,18 +150,6 @@
 (use-package vimish-fold
   :config
   (vimish-fold-global-mode 1)
-  :bind
-  (("C-x v f" . vimish-fold)
-   ("C-x v v" . vimish-fold-delete))
-  )
-
-(use-package multiple-cursors
-  :bind
-  (("C->" . mc/mark-next-like-this)
-   ("C-<" . mc/mark-previous-like-this)
-   ("C-c C-<" . mc/mark-all-like-this))
-  :config
-  (delete-selection-mode 1)
   )
 
 (use-package highlight-indent-guides
@@ -261,6 +237,66 @@
 	ad-do-it)
     ad-do-it))
 
+(use-package general
+  :config
+  (progn
+    ;; reset dired mode space
+    (define-key dired-mode-map (kbd "SPC") nil)
+    (general-def :states '(normal motion emacs) "SPC" nil)
+    (general-define-key :states '(normal motion emacs) "M-x" 'smex)
+    (general-define-key
+      :states '(normal motion emacs)
+      "ESC" 'keyboard-quit
+     )
+    (general-create-definer my-leader-def
+      :prefix "SPC")
+    (my-leader-def
+      :keymaps 'normal
+      "f f" 'find-file
+      "f d" 'dired
+      "f j" 'dired-jump
+      "p f" 'projectile-find-file
+      "p d" 'projectile-dired
+      "p t" 'project-explorer-toggle
+      "p s" 'projectile-ag
+      "c c" 'avy-goto-char
+      "c C" 'avy-goto-char-2
+      "c l" 'avy-goto-line
+      "c w" 'avy-goto-word-1
+      "o l" 'org-store-link
+      "o a" 'org-agenda
+      "o c" 'org-capture
+      "g s" 'magit-status
+      "g b" 'magit-blame
+      "v f" 'vimish-fold
+      "v v" 'vimish-fold-delete
+      "m c" 'evil-mc-make-all-cursors
+      "m u" 'evil-mc-undo-all-cursors
+      "m n" 'evil-mc-make-and-goto-next-match
+      "m N" 'evil-mc-skip-and-goto-next-match
+      "w j" 'windmove-left
+      "w l" 'windmove-right
+      "w i" 'windmove-up
+      "w k" 'windmove-down
+      "x"   'smex
+    )
+  )
+)
+
 (provide 'init)
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (yaml-mode web-mode vue-mode vimish-fold use-package sws-mode sublime-themes spaceline smex scss-mode rvm rainbow-delimiters projectile project-explorer popup php-mode persistent-soft pallet multiple-cursors markdown-mode magit ledger-mode json-mode js2-mode jade-mode highlight-indent-guides haml-mode flycheck-color-mode-line flx-ido evil editorconfig coffee-mode avy autopair))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
