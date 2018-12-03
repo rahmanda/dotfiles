@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name : script
+# key : script
+# --
+export default {
+  components: {
+  
+  },
+
+  props: [],
+
+  data() {
+    return {};   
+  },
+
+  methods: {
+  
+  },
+};

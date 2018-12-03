@@ -36,6 +36,8 @@
 (require 'haml-mode)
 (require 'jade-mode)
 (require 'avy)
+(require 'yasnippet)
+(require 'drag-stuff)
 (require 'use-package)
 
 ;; Load theme
@@ -51,7 +53,7 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;; Set linum-mode - view line number
-(add-hook 'prog-mode-hook 'linum-mode)
+(global-linum-mode 1)
 
 (setq indent-tabs-mode nil)
 
@@ -231,6 +233,29 @@
     )
   )
 
+(use-package yasnippet
+  :config
+  (progn
+    (yas-global-mode 1)
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    )
+  )
+
+(use-package drag-stuff
+  :config
+  (drag-stuff-global-mode 1)
+  :bind
+  (:map evil-visual-state-map
+	;; move visual lines up/down
+	("K" . drag-stuff-up)
+	("J" . drag-stuff-down)
+  (:map evil-normal-state-map
+	;; move current line up/down
+	("K" . drag-stuff-up)
+	("J" . drag-stuff-down)
+	)
+  ))
+
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
       (let ((web-mode-enable-part-face nil))
@@ -242,8 +267,8 @@
   (progn
     ;; reset dired mode space
     (define-key dired-mode-map (kbd "SPC") nil)
+
     (general-def :states '(normal motion emacs) "SPC" nil)
-    (general-define-key :states '(normal motion emacs) "M-x" 'smex)
     (general-define-key
       :states '(normal motion emacs)
       "ESC" 'keyboard-quit
@@ -255,7 +280,9 @@
       "f f" 'find-file
       "f d" 'dired
       "f j" 'dired-jump
+      "f r" 'make-directory
       "p f" 'projectile-find-file
+      "p p" 'projectile-switch-project
       "p d" 'projectile-dired
       "p t" 'project-explorer-toggle
       "p s" 'projectile-ag
@@ -263,13 +290,15 @@
       "c C" 'avy-goto-char-2
       "c l" 'avy-goto-line
       "c w" 'avy-goto-word-1
+      "c d" 'comment-dwim
       "o l" 'org-store-link
       "o a" 'org-agenda
       "o c" 'org-capture
       "g s" 'magit-status
-      "g b" 'magit-blame
+      "g b" 'magit-blame-addition
       "v f" 'vimish-fold
       "v v" 'vimish-fold-delete
+      "v m" 'vue-mode
       "m c" 'evil-mc-make-all-cursors
       "m u" 'evil-mc-undo-all-cursors
       "m n" 'evil-mc-make-and-goto-next-match
@@ -279,6 +308,10 @@
       "w i" 'windmove-up
       "w k" 'windmove-down
       "x"   'smex
+      "y l" '(lambda () (interactive) (load-theme 'mccarthy t))
+      "y d" '(lambda () (interactive) (load-theme 'spolsky t))
+      "[" 'text-scale-decrease
+      "]" 'text-scale-increase
     )
   )
 )
@@ -293,7 +326,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yaml-mode web-mode vue-mode vimish-fold use-package sws-mode sublime-themes spaceline smex scss-mode rvm rainbow-delimiters projectile project-explorer popup php-mode persistent-soft pallet multiple-cursors markdown-mode magit ledger-mode json-mode js2-mode jade-mode highlight-indent-guides haml-mode flycheck-color-mode-line flx-ido evil editorconfig coffee-mode avy autopair))))
+    (drag-stuff yasnippet yaml-mode web-mode vue-mode vimish-fold use-package sws-mode sublime-themes spaceline smex scss-mode rvm rainbow-delimiters projectile project-explorer popup php-mode persistent-soft pallet multiple-cursors markdown-mode magit ledger-mode json-mode js2-mode jade-mode highlight-indent-guides haml-mode flycheck-color-mode-line flx-ido evil editorconfig coffee-mode avy autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
