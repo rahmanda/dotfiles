@@ -35,10 +35,12 @@
 (require 'markdown-mode)
 (require 'haml-mode)
 (require 'jade-mode)
+(require 'go-mode)
 (require 'avy)
 (require 'yasnippet)
 (require 'drag-stuff)
 (require 'use-package)
+(require 'golint)
 
 ;; Load theme
 (load-theme 'spolsky t)
@@ -186,6 +188,7 @@
   (progn
     (setq js-indent-level 2)
     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-to-list 'auto-mode-alist '("\\.es6\\'" . js2-mode))
     (add-hook 'js2-mode-hook 'linum-mode))
   )
 
@@ -201,7 +204,9 @@
   (add-hook 'coffee-mode-hook 'flycheck-mode)
   )
 
-(use-package vue-mode)
+(use-package vue-mode
+  :config
+  (setq mmm-submode-decoration-level 0))
 
 (use-package scss-mode
   :config
@@ -279,6 +284,7 @@
       :keymaps 'normal
       "f f" 'find-file
       "f d" 'dired
+      "f g" 'find-grep-dired
       "f j" 'dired-jump
       "f r" 'make-directory
       "p f" 'projectile-find-file
@@ -326,7 +332,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (drag-stuff yasnippet yaml-mode web-mode vue-mode vimish-fold use-package sws-mode sublime-themes spaceline smex scss-mode rvm rainbow-delimiters projectile project-explorer popup php-mode persistent-soft pallet multiple-cursors markdown-mode magit ledger-mode json-mode js2-mode jade-mode highlight-indent-guides haml-mode flycheck-color-mode-line flx-ido evil editorconfig coffee-mode avy autopair))))
+    (golint go-mode drag-stuff yasnippet yaml-mode web-mode vue-mode vimish-fold use-package sws-mode sublime-themes spaceline smex scss-mode rvm rainbow-delimiters projectile project-explorer popup php-mode persistent-soft pallet multiple-cursors markdown-mode magit ledger-mode json-mode js2-mode jade-mode highlight-indent-guides haml-mode flycheck-color-mode-line flx-ido evil editorconfig coffee-mode avy autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

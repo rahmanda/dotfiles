@@ -23,6 +23,8 @@
 (depends-on "flycheck-color-mode-line")
 (depends-on "general")
 (depends-on "git-commit")
+(depends-on "go-mode")
+(depends-on "golint")
 (depends-on "haml-mode")
 (depends-on "highlight-indent-guides")
 (depends-on "jade-mode")
