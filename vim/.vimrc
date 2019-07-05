@@ -1,9 +1,10 @@
 set nocompatible
+" turn off beeping everywhere
+set visualbell
 set t_Co=256
 set laststatus=2
 syntax enable
 set background=dark
-color dracula
 set number
 filetype off
 set wildmenu
@@ -15,20 +16,17 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " i don't know what this is use for, but it is needed for dependencies
 Plugin 'L9'
+Plugin 'junegunn/fzf.vim'
 " mainstream tree explorer
 Plugin 'scrooloose/nerdtree'
 " syntax checker that runs after you save your buffer
 Plugin 'scrooloose/syntastic'
 " editor configurator
 Plugin 'editorconfig/editorconfig-vim'
-" color scheme
-Plugin 'dracula/vim'
 " status line
 Plugin 'itchyny/lightline.vim'
 " line up text
 Plugin 'godlygeek/tabular'
-" fuzzy file search and tab navigation
-Plugin 'wincent/command-t'
 " syntax highlighter for scss
 Plugin 'cakebaker/scss-syntax.vim'
 " syntax highlighter for javascript
