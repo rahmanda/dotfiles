@@ -9,6 +9,7 @@ set number
 filetype off
 set wildmenu
 set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.fzf
 
 " vundle begin
 call vundle#begin()
